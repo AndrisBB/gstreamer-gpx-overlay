@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="312" height="120" viewBox="0 0 78 30">
+    <text xml:id="timestamp_id" x="2" y="29" fill="blue" style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#1a00ff;fill-opacity:1;stroke-width:0.265;stroke-dasharray:none">
+    </text>
+    <rect style="fill:#494949;fill-opacity:0.3;stroke:none;" width="78" height="30"/>
+    <text xml:id="label_id" x="20" y="8" fill="blue" style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#ffffff;fill-opacity:1;stroke-width:0.265;stroke-dasharray:none">
+        HEART RATE
+    </text>
+    <text xml:id="hr_id" x="20" y="20" fill="blue" style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#1ad93e;fill-opacity:1;stroke-width:0.265;stroke-dasharray:none">
+        140 BPM
+    </text>
+    <path xml:id="heart_id"
+        transform="scale(1.2 1.2)"
+        d="m 14,4 a 4.0366464,4.1745268 0.0194517 0 0 -2.745618,-1.114394 4.0366464,4.1745268 0.0194517 0 0 -2.907338,1.281633 l -0.0016,-0.0017 -0.0016,0.0017 a 4.0366464,4.1745268 0.0194517 0 0 -2.907286,-1.28159 4.0366464,4.1745268 0.0194517 0 0 -4.036694,4.174578 4.0366464,4.1745268 0.0194517 0 0 1.239257,3.00659 l -0.0016,0.002 5.707812,5.90276 5.708275,-5.90325 -3.96e-4,-3.8e-4 a 4.0366464,4.1745268 0.0194517 0 0 1.23801,-3.00797 4.0366464,4.1745268 0.0194517 0 0 -1.290981,-3.060131 z"
+        fill="#ff00ff"/>
+</svg>

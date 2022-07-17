@@ -1,0 +1,42 @@
+var document = new Document("../src/gpxoverlay/assets/atom.svg");
+this.Document = document;
+
+var counter = 0;
+
+function start()
+{
+    print("JS start called");
+}
+
+function render(point)
+{
+    counter = counter + 1;
+
+    if(point != undefined) {
+        // print(point.timestamp);
+        var el = Document.getElementById("timestamp_id");
+        if(el != undefined) {
+            el.innerHTML = point.timestamp;
+        }
+
+        el = Document.getElementById("hr_id");
+        if(el != undefined) {
+            el.innerHTML = point.hr.toString() + " BPM";
+        }
+
+        el = Document.getElementById("heart_id");
+        if(el != undefined) {
+            var fill = "#ffffff"
+            if(counter >= 0 && counter < 15) {
+                fill = "#ff0000";
+            }
+            
+            if(counter > 30) {
+                counter = 0;
+            }
+            el.setAttribute("fill", fill);
+        }
+    }
+
+    return document.stringify();
+}
