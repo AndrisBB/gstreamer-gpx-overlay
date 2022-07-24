@@ -136,14 +136,17 @@ static gpx_trk_segment *
 gpx_parse_trk_segment(xmlNodePtr trk_seg_node)
 {
 	printf("[GPX Parser] Parse segment\n");
-
+	
 	gpx_trk_segment *segment = malloc(sizeof(gpx_trk_segment));
+
+	gint point_idx = 0;
 
 	xmlNodePtr trk_point_node = trk_seg_node->xmlChildrenNode;
 	while(trk_point_node) {
 		if((trk_point_node->type == XML_ELEMENT_NODE) && (strcmp((const char *)trk_point_node->name, "trkpt") == 0)) {
 			gpx_trk_point *point = gpx_parse_trk_point(trk_point_node);
 			if(point != NULL) {
+				point->idx = point_idx++;
 				segment->trk_points = g_list_append(segment->trk_points, (gpointer)point);
 			}
 		}

@@ -5,6 +5,8 @@
 
 typedef struct
 {
+    gint idx;
+
     GDateTime *timestamp;
     gint64 offset;
 

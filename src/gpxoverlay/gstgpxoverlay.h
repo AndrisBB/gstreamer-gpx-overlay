@@ -40,16 +40,15 @@ typedef struct _GstGpxOverlayClass GstGpxOverlayClass;
 
 struct _GstGpxOverlay
 {
-	GstVideoFilter base_gpxoverlay;
+	GstVideoFilter 	base_gpxoverlay;
 
-	RsvgHandle *handle;
+	RsvgHandle 		*handle;
 
-	duk_context *duk_ctx;
+	duk_context 	*duk_ctx;
+	gchar 			*gpx_location;
 
-	gchar *svg_template;
-	gsize svg_template_length;
-
-	gchar *gpx_location;
+	gint 			offset_x;
+	gint 			offset_y;
 
 	gpx_trk_segment *segment;
 };

@@ -3,17 +3,19 @@ this.Document = document;
 
 var counter = 0;
 
-function start()
+function start(segment)
 {
-    print("JS start called");
 }
 
 function render(point)
 {
+    // print("JS render called");
+
     counter = counter + 1;
 
     if(point != undefined) {
-        // print(point.timestamp);
+        // print(point.elevation);
+        
         var el = Document.getElementById("timestamp_id");
         if(el != undefined) {
             el.innerHTML = point.timestamp;

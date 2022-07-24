@@ -37,10 +37,15 @@ int gst_duktape_load_script(duk_context *ctx, const char* location)
     return 0;
 }
 
-int gst_duktape_start(duk_context *ctx)
+int gst_duktape_start(duk_context *ctx, void *data)
 {
     duk_get_prop_string(ctx, -1, "start");
-    duk_int_t ret = duk_pcall(ctx, 0);
+
+    duk_get_global_string(ctx, "TrkSegment");
+    duk_push_pointer(ctx, data);
+    duk_new(ctx, 1);
+
+    duk_int_t ret = duk_pcall(ctx, 1);
     if(ret != 0) {
         duk_safe_to_stacktrace(ctx, -1);
     } else {
@@ -78,7 +83,7 @@ duk_ret_t native_print(duk_context *ctx)
     duk_insert(ctx, 0);
     duk_join(ctx, duk_get_top(ctx) - 1);
     // duk_safe_to_string(ctx, -1);
-    printf("%s\n", duk_safe_to_string(ctx, -1));
+    printf("  [JavaScript] %s\n", duk_safe_to_string(ctx, -1));
     return 0;
 }
 

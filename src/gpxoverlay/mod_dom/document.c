@@ -46,8 +46,6 @@ static duk_ret_t document_get_element_by_id(duk_context *ctx)
 
 static duk_ret_t document_stringify(duk_context *ctx) 
 {
-    // printf("Stringify\n");
-
     duk_push_this(ctx);
     duk_get_prop_string(ctx, -1, "Document");
     document_t *document = (document_t *)duk_to_pointer(ctx, -1);
@@ -76,14 +74,11 @@ static duk_ret_t document_stringify(duk_context *ctx)
 
 static duk_ret_t document_destructor(duk_context *ctx)
 {
-    printf("Destructor called, free document\n");
     return 0;
 }
 
 static duk_ret_t document_constructor(duk_context *ctx) 
 {
-    printf("Constructor called\n");
-
     if(!duk_is_constructor_call(ctx)) {
         printf("This is not a constructor call\n");
         return DUK_RET_TYPE_ERROR;
