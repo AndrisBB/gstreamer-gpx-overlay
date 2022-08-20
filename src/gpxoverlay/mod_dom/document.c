@@ -1,17 +1,34 @@
 #include "document.h"
 
-#include <gdome.h>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
 
 typedef struct 
 {
-    GdomeDOMImplementation *domimpl;
-    GdomeDocument *doc;
+    xmlDocPtr xml_doc;
 } document_t;
+
+static xmlNode* find_node(xmlNode * node, char * prop_val) 
+{
+    xmlNode *result;
+
+    if(node == NULL) return NULL;
+
+    while(node) {
+        if((node->type == XML_ELEMENT_NODE) && xmlGetProp(node, "id") && (strcmp(xmlGetProp(node, "id"), prop_val) == 0)) {
+            return node;
+        }
+    
+        if(result = find_node(node->children, prop_val)) return result;
+    
+        node = node->next;
+    }
+  
+    return NULL;
+}
 
 static duk_ret_t document_get_element_by_id(duk_context *ctx)
 {
-    GdomeException exc;
-
     if(duk_get_top(ctx) == 0) {
         printf("No argument given\n");
         return DUK_RET_ERROR;
@@ -27,18 +44,21 @@ static duk_ret_t document_get_element_by_id(duk_context *ctx)
         return 0;
     }
     duk_pop(ctx);
-    
-    GdomeDOMString *dom_id = gdome_str_mkref(id);
-    GdomeElement *element = gdome_doc_getElementById(document->doc, dom_id, &exc);
-    gdome_str_unref(dom_id);
-
-    if(element == NULL) {
-        printf("No element found\n");
+        
+    xmlNode *root = xmlDocGetRootElement(document->xml_doc);
+    if(root == NULL) {
+        printf("[Document] root element is null\n");
         return 0;
     }
-    
+
+    xmlNode *node = find_node(root, id);
+    if(!node) {
+        printf("[Document] Failed to find node\n");
+        return 0;
+    }
+
     duk_get_global_string(ctx, "Element");
-    duk_push_pointer(ctx, element);
+    duk_push_pointer(ctx, node);
     duk_new(ctx, 1);
 
     return 1;
@@ -55,25 +75,22 @@ static duk_ret_t document_stringify(duk_context *ctx)
     }
     duk_pop(ctx);
 
-    GdomeException exc;
-    char *data = NULL;
-    GdomeBoolean success = gdome_di_saveDocToMemory(document->domimpl,
-                                                    document->doc,
-                                                    &data,
-                                                    GDOME_SAVE_STANDARD,
-                                                    &exc);
-    if(!success) {
-        return DUK_ERR_ERROR;
-    }
+    xmlChar *xmlbuff = NULL;
+    int buffersize = 0;
 
-    duk_push_string(ctx, (const char *)data);
-    free(data);
+    xmlDocDumpMemory(document->xml_doc, &xmlbuff, &buffersize);
+
+    duk_push_string(ctx, (const char *)xmlbuff);
+    xmlFree(xmlbuff);
 
     return 1;
 }
 
 static duk_ret_t document_destructor(duk_context *ctx)
 {
+    // TODO: Clean up document
+    // xmlFreeDoc(doc);
+
     return 0;
 }
 
@@ -94,17 +111,14 @@ static duk_ret_t document_constructor(duk_context *ctx)
         printf("Parse SVG file:%s\n", location);
     }
 
-    GdomeDOMImplementation *domimpl = gdome_di_mkref();
-    GdomeException exc;
-    GdomeDocument *doc = gdome_di_createDocFromURI(domimpl, location, GDOME_LOAD_PARSING, &exc);
-    if(doc == NULL) {
-        printf("DOMImplementation.createDocFromURI: failed\n\tException #%d\n", exc);
-        return DUK_ERR_URI_ERROR;
-    }
-
     document_t *document = malloc(sizeof(document_t));
-    document->domimpl = domimpl;
-    document->doc = doc;
+
+    // Load XML document
+    document->xml_doc = xmlReadFile(location, NULL, 0);
+    if(document->xml_doc == NULL) {
+        printf("[Document] Failed to parse %s\n", location);
+        return DUK_RET_ERROR;
+    }
 
     duk_push_this(ctx);
     duk_push_pointer(ctx, (void *)document);

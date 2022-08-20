@@ -6,3 +6,9 @@ pipelines.txt
 pipelines/
 
 video.mp4
+
+.vscode/
+
+builddir/meson-private/
+
+builddir/

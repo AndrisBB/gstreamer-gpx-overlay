@@ -21,7 +21,6 @@ shared_library('gstgpxoverlay',
     dependency('gstreamer-1.0', version : '>=1.16.0'),
     dependency('gstreamer-video-1.0'),
     dependency('librsvg-2.0', version : '>= 2.36.2'),
-    dependency('libxml-2.0'),
-    dependency('gdome2')
+    dependency('libxml-2.0')
   ]
 )

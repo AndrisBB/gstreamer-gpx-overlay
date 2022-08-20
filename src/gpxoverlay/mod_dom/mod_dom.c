@@ -5,7 +5,6 @@
 #include "trk_segment.h"
 
 #include <stdio.h>
-#include <gdome.h>
 
 duk_ret_t dukopen_dom_module(duk_context *ctx)
 {
