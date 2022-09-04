@@ -4,7 +4,7 @@
 
 typedef struct
 {
-    gpx_trk_segment *priv;
+    gpx_trk_segment_t *priv;
 } 
 trk_segment_t;
 
@@ -23,7 +23,7 @@ static duk_ret_t element_trk_points_getter(duk_context *ctx)
     GList *elem;
     gint idx = 0;
     for(elem = segment->priv->trk_points; elem; elem = elem->next) {
-        gpx_trk_point *point = (gpx_trk_point *)elem->data;
+        gpx_trk_point_t *point = (gpx_trk_point_t *)elem->data;
         duk_get_global_string(ctx, "TrkPoint");
         duk_push_pointer(ctx, point);
         duk_new(ctx, 1);
@@ -58,7 +58,7 @@ static duk_ret_t trk_segment_constructor(duk_context *ctx)
         return DUK_RET_TYPE_ERROR;
     }
 
-    gpx_trk_segment *priv = (gpx_trk_segment *)duk_to_pointer(ctx, 0);
+    gpx_trk_segment_t *priv = (gpx_trk_segment_t *)duk_to_pointer(ctx, 0);
     if(priv == NULL) {
         printf("No trk_segment pointer given\n");
     }

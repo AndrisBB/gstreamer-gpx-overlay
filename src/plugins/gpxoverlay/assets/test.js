@@ -1,4 +1,4 @@
-var document = new Document("../src/gpxoverlay/assets/atom.svg");
+var document = new Document("../src/plugins/gpxoverlay/assets/atom.svg");
 this.Document = document;
 
 var counter = 0;

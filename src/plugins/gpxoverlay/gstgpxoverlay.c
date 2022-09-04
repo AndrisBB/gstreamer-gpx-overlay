@@ -37,7 +37,9 @@
 #include <gst/gst.h>
 #include <gst/video/video.h>
 #include <gst/video/gstvideofilter.h>
+
 #include "gstgpxoverlay.h"
+#include "overlaymetadata.h"
 
 #include "gstduktape.h"
 
@@ -149,7 +151,7 @@ gst_gpx_overlay_init(GstGpxOverlay *gpxoverlay)
 	gpxoverlay->duk_ctx = NULL;
 
 	gpxoverlay->gpx_location = NULL;
-	gpxoverlay->segment = NULL;
+	// gpxoverlay->segment = NULL;
 
 	gpxoverlay->offset_x = 0;
 	gpxoverlay->offset_y = 0;
@@ -254,14 +256,14 @@ gst_gpx_overlay_start(GstBaseTransform *trans)
 	GST_WARNING_OBJECT(gpxoverlay, "start");
 
 	// Load GPX file
-	printf("[GPX Overlay] GPX file:%s\n", gpxoverlay->gpx_location);
-	gpxoverlay->segment = gpx_parse_file(gpxoverlay->gpx_location);
-	if(gpxoverlay->segment == NULL) {
-		printf("[GPX Overlay] Failed to parse GPX\n");
-		return FALSE;
-	}
+	// printf("[GPX Overlay] GPX file:%s\n", gpxoverlay->gpx_location);
+	// gpxoverlay->segment = gp_parse_file(gpxoverlay->gpx_location);
+	// if(gpxoverlay->segment == NULL) {
+	// 	printf("[GPX Overlay] Failed to parse GPX\n");
+	// 	return FALSE;
+	// }
 
-	gst_duktape_start(gpxoverlay->duk_ctx, (void*)gpxoverlay->segment);
+	gst_duktape_start(gpxoverlay->duk_ctx, NULL);
 
 	printf("[GPX Overlay] Started\n");
 	return TRUE;
@@ -315,14 +317,19 @@ gst_gpx_overlay_transform_frame_ip(GstVideoFilter *filter, GstVideoFrame *frame)
 		return GST_FLOW_ERROR;
 	}
 
+	OverlayMeta *meta = gst_buffer_get_overlay_meta(frame->buffer);
+	if(meta != NULL) {
+		printf("Got metadata:%s\n", meta->data);
+	}
+
 	// Find GPX datapoint to pass to renderer
 	// printf("================================\n");
 	// printf("Frame PTS: %" G_GINT64_FORMAT "\n", GST_BUFFER_PTS(frame->buffer));
 	// printf("Frame DURATION: %" G_GINT64_FORMAT "\n", GST_BUFFER_DURATION(frame->buffer));
 	
-	gpx_trk_point *point = gpx_find_trk_point(gpxoverlay->segment, GST_BUFFER_PTS(frame->buffer), GST_BUFFER_DURATION(frame->buffer));
+	// gpx_trk_point *point = gpx_find_trk_point(gpxoverlay->segment, GST_BUFFER_PTS(frame->buffer), GST_BUFFER_DURATION(frame->buffer));
 
-	int data_len = gst_duktape_render(gpxoverlay->duk_ctx, svg_buffer, MAX_SVG_BUFFER_SIZE, (void *)point);
+	int data_len = gst_duktape_render(gpxoverlay->duk_ctx, svg_buffer, MAX_SVG_BUFFER_SIZE, (void *)NULL);
 
 	// Load returned string into RSVG
 	GError *error = NULL;

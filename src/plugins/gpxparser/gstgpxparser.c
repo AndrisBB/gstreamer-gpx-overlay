@@ -38,6 +38,7 @@
 #include <gst/video/video.h>
 #include <gst/video/gstvideofilter.h>
 #include "gstgpxparser.h"
+#include "overlaymetadata.h"
 
 #include <stdio.h>
 
@@ -66,17 +67,10 @@ enum
 	PROP_LOCATION
 };
 
-/* pad templates */
 
-/* FIXME: add/remove formats you can handle */
-#define VIDEO_SRC_CAPS \
-	GST_VIDEO_CAPS_MAKE("{ BGRA }")
+#define VIDEO_SRC_CAPS 		GST_VIDEO_CAPS_MAKE("{ BGRA }")
+#define VIDEO_SINK_CAPS 	GST_VIDEO_CAPS_MAKE("{ BGRA }")
 
-/* FIXME: add/remove formats you can handle */
-#define VIDEO_SINK_CAPS \
-	GST_VIDEO_CAPS_MAKE("{ BGRA }")
-
-/* class initialization */
 
 G_DEFINE_TYPE_WITH_CODE(GstGpxParser, gst_gpx_parser, GST_TYPE_VIDEO_FILTER,
 						GST_DEBUG_CATEGORY_INIT(gst_gpx_parser_debug_category, "gpxparser", 0,
@@ -120,6 +114,7 @@ static void
 gst_gpx_parser_init(GstGpxParser *gpxparser)
 {
 	gpxparser->location = NULL;
+	gpxparser->gpx = NULL;
 }
 
 void gst_gpx_parser_set_property(GObject *object, guint property_id,
@@ -127,13 +122,14 @@ void gst_gpx_parser_set_property(GObject *object, guint property_id,
 {
 	GstGpxParser *gpxparser = GST_GPX_PARSER(object);
 
-	printf("set_property\n");
-
 	switch (property_id)
 	{
 		case PROP_LOCATION:
-			// g_free(gpxparser->location);
+			if(gpxparser->location != NULL) {
+				g_free(gpxparser->location);
+			}
 			gpxparser->location = g_value_dup_string(value);
+			printf("set location to:%s\n", gpxparser->location);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
@@ -186,10 +182,16 @@ gst_gpx_parser_start(GstBaseTransform *trans)
 {
 	GstGpxParser *gpxparser = GST_GPX_PARSER(trans);
 
-	GST_DEBUG_OBJECT(gpxparser, "start");
-
-	// Load GPX file
-	
+	if(gpxparser->location != NULL) {
+		gpx_t *gpx = gpx_parse_file(gpxparser->location);
+		if(gpx != NULL) {
+			gpx_dump(gpx);
+			gpxparser->gpx = gpx;
+		}
+	}
+	else {
+		GST_WARNING_OBJECT(gpxparser, "Location is not set, so will do nothing\n");
+	}
 
 	return TRUE;
 }
@@ -220,7 +222,14 @@ gst_gpx_parser_transform_frame_ip(GstVideoFilter *filter, GstVideoFrame *frame)
 {
 	GstGpxParser *gpxparser = GST_GPX_PARSER(filter);
 
-	printf("transform_frame_ip:%s\n", gpxparser->location);
-
+	// GST_INFO_OBJECT(gpxparser, "Frame PTS: %" G_GINT64_FORMAT, GST_BUFFER_PTS(frame->buffer));
+	// printf("Frame DURATION: %" G_GINT64_FORMAT "\n", GST_BUFFER_DURATION(frame->buffer));
+	
+	gpx_trk_point_t *point = gpx_find_trk_point(gpxparser->gpx, 90000000, GST_BUFFER_PTS(frame->buffer), GST_BUFFER_DURATION(frame->buffer));
+	if(point != NULL) {
+		char *json = gpx_trk_point_json(point);
+		gst_buffer_add_overlay_meta(frame->buffer, json);
+	}
+	
 	return GST_FLOW_OK;
 }

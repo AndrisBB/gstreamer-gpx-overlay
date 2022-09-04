@@ -22,6 +22,7 @@
 
 #include <gst/video/video.h>
 #include <gst/video/gstvideofilter.h>
+#include "gpxparser.h"
 
 G_BEGIN_DECLS
 
@@ -39,6 +40,7 @@ struct _GstGpxParser
 	GstVideoFilter base_gpxparser;
 
 	gchar *location;
+	gpx_t *gpx;
 };
 
 struct _GstGpxParserClass

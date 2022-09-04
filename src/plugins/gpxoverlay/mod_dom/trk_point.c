@@ -3,7 +3,7 @@
 
 typedef struct
 {
-    gpx_trk_point *priv;
+    gpx_trk_point_t *priv;
 } 
 trk_point_t;
 
@@ -140,7 +140,7 @@ static duk_ret_t trk_point_constructor(duk_context *ctx)
         return DUK_RET_TYPE_ERROR;
     }
 
-    gpx_trk_point *priv = (gpx_trk_point *)duk_to_pointer(ctx, 0);
+    gpx_trk_point_t *priv = (gpx_trk_point_t *)duk_to_pointer(ctx, 0);
     if(priv == NULL) {
         printf("No trk_point pointer given\n");
     }

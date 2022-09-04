@@ -13,3 +13,12 @@ gst-launch-1.0 videotestsrc \
 ```
 
 
+```
+gst-launch-1.0 videotestsrc \
+    ! video/x-raw,width=640,height=480,framerate=1/1 \
+    ! gpxparser \
+        location=../src/gpxoverlay/assets/route.gpx \
+    ! fakesink
+```
+
+

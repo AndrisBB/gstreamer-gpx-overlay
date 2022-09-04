@@ -25,7 +25,6 @@
 
 #include <librsvg/rsvg.h>
 #include "gstduktape.h"
-#include "gpxparser.h"
 
 G_BEGIN_DECLS
 
@@ -50,7 +49,7 @@ struct _GstGpxOverlay
 	gint 			offset_x;
 	gint 			offset_y;
 
-	gpx_trk_segment *segment;
+	// gpx_trk_segment *segment;
 };
 
 struct _GstGpxOverlayClass
