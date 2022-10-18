@@ -60,16 +60,14 @@ int gst_duktape_start(duk_context *ctx, void *data)
 int gst_duktape_render(duk_context *ctx, const char *buffer, size_t size, void *data)
 {
     duk_get_prop_string(ctx, -1, "render");
-
-    duk_get_global_string(ctx, "TrkPoint");
-    duk_push_pointer(ctx, data);
-    duk_new(ctx, 1);
-
+    duk_push_string(ctx, (char *)data);
+    
     duk_int_t ret = duk_pcall(ctx, 1);
     if(ret != 0) {
         duk_safe_to_stacktrace(ctx, -1);
         printf("Error: %s\n", duk_safe_to_string(ctx, -1));
-    } else {
+    } 
+    else {
         strcpy(buffer, duk_safe_to_string(ctx, -1));
     }
     duk_pop(ctx);

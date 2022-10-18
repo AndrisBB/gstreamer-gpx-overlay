@@ -318,18 +318,13 @@ gst_gpx_overlay_transform_frame_ip(GstVideoFilter *filter, GstVideoFrame *frame)
 	}
 
 	OverlayMeta *meta = gst_buffer_get_overlay_meta(frame->buffer);
+	void *json_data = NULL;
 	if(meta != NULL) {
-		printf("Got metadata:%s\n", meta->data);
+		// printf("Got metadata:%s\n", meta->data);
+		json_data = meta->data;
 	}
 
-	// Find GPX datapoint to pass to renderer
-	// printf("================================\n");
-	// printf("Frame PTS: %" G_GINT64_FORMAT "\n", GST_BUFFER_PTS(frame->buffer));
-	// printf("Frame DURATION: %" G_GINT64_FORMAT "\n", GST_BUFFER_DURATION(frame->buffer));
-	
-	// gpx_trk_point *point = gpx_find_trk_point(gpxoverlay->segment, GST_BUFFER_PTS(frame->buffer), GST_BUFFER_DURATION(frame->buffer));
-
-	int data_len = gst_duktape_render(gpxoverlay->duk_ctx, svg_buffer, MAX_SVG_BUFFER_SIZE, (void *)NULL);
+	int data_len = gst_duktape_render(gpxoverlay->duk_ctx, svg_buffer, MAX_SVG_BUFFER_SIZE, (void *)json_data);
 
 	// Load returned string into RSVG
 	GError *error = NULL;

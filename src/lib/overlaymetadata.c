@@ -26,7 +26,9 @@ static void
 overlay_meta_free(GstMeta *meta, GstBuffer *buffer)
 {
     OverlayMeta *emeta = (OverlayMeta *)meta;
-    g_free(emeta->data);
+    if(meta != NULL && emeta->data != NULL) {
+        g_free(emeta->data);
+    }
 }
 
 static gboolean
@@ -34,8 +36,7 @@ overlay_meta_transform(GstBuffer * transbuf, GstMeta * meta,
                                 GstBuffer * buffer, GQuark type, gpointer data)
 {
     OverlayMeta *emeta = (OverlayMeta *)meta;
-    
-    gst_buffer_add_overlay_meta(transbuf, emeta->data);
+    gst_buffer_add_overlay_meta(transbuf, g_strdup(emeta->data));
     return TRUE;
 }
 

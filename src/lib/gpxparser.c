@@ -302,7 +302,7 @@ gpx_find_trk_point(gpx_t *gpx, gint64 offset, gint64 pts, gint64 duration)
 {
 	gpx_trk_point_t *point = NULL;
 
-	GTimeSpan pts_offset = offset + (pts / 1000 / 1000); // pts is nanoseconds
+	GTimeSpan pts_offset = offset + (pts / 1000 ); // pts is nanoseconds
 	GDateTime *search_timestamp = g_date_time_add(gpx->time, pts_offset);
 
 	// GST_INFO("Search for %s", g_date_time_format_iso8601(search_timestamp));
@@ -355,13 +355,16 @@ gpx_trk_point_json(gpx_trk_point_t *point)
 	json_generator_set_root(generator, node);
 	
 	gsize length;
-  	gchar *data;
+	gchar *data;
 	data = json_generator_to_data(generator, &length);
 
+	char *json = g_strdup(data);
+
+	g_free(data);
 	json_node_free(node);
 	g_object_unref(generator);
 
-	return data;
+	return json;
 }
 
 void

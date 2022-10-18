@@ -227,6 +227,7 @@ gst_gpx_parser_transform_frame_ip(GstVideoFilter *filter, GstVideoFrame *frame)
 	
 	gpx_trk_point_t *point = gpx_find_trk_point(gpxparser->gpx, 90000000, GST_BUFFER_PTS(frame->buffer), GST_BUFFER_DURATION(frame->buffer));
 	if(point != NULL) {
+		// GST_INFO("Point@:%s", g_date_time_format_iso8601(point->timestamp));
 		char *json = gpx_trk_point_json(point);
 		gst_buffer_add_overlay_meta(frame->buffer, json);
 	}

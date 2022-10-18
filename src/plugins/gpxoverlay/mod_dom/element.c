@@ -40,6 +40,8 @@ static duk_ret_t element_id_getter(duk_context *ctx)
 
 static duk_ret_t element_inner_html_setter(duk_context *ctx)
 {
+    printf("Set inner HTML\n");
+
     element_t *element = (element_t *)duk_utils_get_stack_pointer(ctx, "Element");
     if(element == NULL) {
         printf("Element is NULL\n");
@@ -200,11 +202,6 @@ static duk_ret_t element_constructor(duk_context *ctx)
     duk_push_c_function(ctx, element_inner_html_getter, 0);
     duk_push_c_function(ctx, element_inner_html_setter, 1);
     duk_def_prop(ctx, -4, DUK_DEFPROP_HAVE_GETTER | DUK_DEFPROP_HAVE_SETTER);
-
-    // duk_push_string(ctx, "innerHTML");
-    // duk_push_c_function(ctx, element_inner_html_getter, 0);
-    // duk_push_c_function(ctx, element_inner_html_setter, 1);
-    // duk_def_prop(ctx, -4, DUK_DEFPROP_HAVE_GETTER | DUK_DEFPROP_HAVE_SETTER);
 
     duk_push_pointer(ctx, (void *)element);
     duk_put_prop_string(ctx, -2, "Element");
